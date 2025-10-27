@@ -376,6 +376,17 @@ impl<Client, P: Pair, Block: BlockT, BI: BlockImport<Block>> AuraBlockImport<Cli
 	}
 }
 
+impl<Client, P: Pair, Block: BlockT, BI: BlockImport<Block> + Clone> Clone
+	for AuraBlockImport<Client, P, Block, BI>
+{
+	fn clone(&self) -> Self {
+		Self {
+			block_import: self.block_import.clone(),
+			authorities_tracker: self.authorities_tracker.clone(),
+		}
+	}
+}
+
 #[async_trait::async_trait]
 impl<Client: Sync + Send, P: Pair, Block: BlockT, BI: BlockImport<Block> + Send + Sync>
 	BlockImport<Block> for AuraBlockImport<Client, P, Block, BI>

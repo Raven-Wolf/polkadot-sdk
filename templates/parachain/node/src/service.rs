@@ -9,7 +9,11 @@ use parachain_template_runtime::{
 	opaque::{Block, Hash},
 };
 
-use polkadot_sdk::{cumulus_client_service::ParachainTracingExecuteBlock, *};
+use polkadot_sdk::{
+	cumulus_client_service::ParachainTracingExecuteBlock,
+	sc_consensus_aura::{AuraBlockImport, AuthoritiesTracker, CompatibilityMode},
+	*,
+};
 
 // Cumulus Imports
 use cumulus_client_bootnodes::{start_bootnode_tasks, StartBootnodeTasksParams};
@@ -50,7 +54,16 @@ type ParachainClient = TFullClient<Block, RuntimeApi, ParachainExecutor>;
 
 type ParachainBackend = TFullBackend<Block>;
 
-type ParachainBlockImport = TParachainBlockImport<Block, Arc<ParachainClient>, ParachainBackend>;
+type ParachainBlockImport = TParachainBlockImport<
+	Block,
+	AuraBlockImport<
+		ParachainClient,
+		sp_consensus_aura::sr25519::AuthorityPair,
+		Block,
+		Arc<ParachainClient>,
+	>,
+	ParachainBackend,
+>;
 
 /// Assembly of PartialComponents (enough to run chain ops subcommands)
 pub type Service = PartialComponents<
@@ -119,7 +132,12 @@ pub fn new_partial(config: &Configuration) -> Result<Service, sc_service::Error>
 		.build(),
 	);
 
-	let block_import = ParachainBlockImport::new(client.clone(), backend.clone());
+	let authorities_tracker = Arc::new(
+		AuthoritiesTracker::new(client.clone(), &CompatibilityMode::None)
+			.map_err(sc_service::Error::Other)?,
+	);
+	let block_import = AuraBlockImport::new(client.clone(), authorities_tracker.clone());
+	let block_import = ParachainBlockImport::new(block_import, backend.clone());
 
 	let import_queue = build_import_queue(
 		client.clone(),
@@ -127,6 +145,7 @@ pub fn new_partial(config: &Configuration) -> Result<Service, sc_service::Error>
 		config,
 		telemetry.as_ref().map(|telemetry| telemetry.handle()),
 		&task_manager,
+		authorities_tracker,
 	)
 	.map_err(|e| sc_service::Error::Other(e))?;
 
@@ -149,6 +168,9 @@ fn build_import_queue(
 	config: &Configuration,
 	telemetry: Option<TelemetryHandle>,
 	task_manager: &TaskManager,
+	authorities_tracker: Arc<
+		AuthoritiesTracker<sp_consensus_aura::sr25519::AuthorityPair, Block, ParachainClient>,
+	>,
 ) -> Result<sc_consensus::DefaultImportQueue<Block>, String> {
 	cumulus_client_consensus_aura::equivocation_import_queue::fully_verifying_import_queue::<
 		sp_consensus_aura::sr25519::AuthorityPair,
@@ -166,6 +188,7 @@ fn build_import_queue(
 		&task_manager.spawn_essential_handle(),
 		config.prometheus_registry(),
 		telemetry,
+		authorities_tracker,
 	)
 }
 

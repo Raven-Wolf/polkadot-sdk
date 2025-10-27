@@ -62,6 +62,7 @@ use sc_consensus::{
 	import_queue::{BasicQueue, Verifier as VerifierT},
 	BlockImportParams, DefaultImportQueue, LongestChain,
 };
+use sc_consensus_aura::{AuraBlockImport, AuthoritiesTracker, CompatibilityMode};
 use sc_consensus_manual_seal::consensus::aura::AuraConsensusDataProvider;
 use sc_network::{config::FullNetworkConfiguration, NotificationMetrics};
 use sc_service::{Configuration, Error, PartialComponents, TaskManager};
@@ -135,11 +136,15 @@ where
 		let relay_chain_verifier =
 			Box::new(RelayChainVerifier::new(client.clone(), inherent_data_providers));
 
+		let authorities_tracker =
+			Arc::new(AuthoritiesTracker::new(client.clone(), &CompatibilityMode::None)?);
+
 		let equivocation_aura_verifier =
 			EquivocationVerifier::<<AuraId as AppCrypto>::Pair, _, _, _>::new(
 				client.clone(),
 				inherent_data_providers,
 				telemetry_handle,
+				authorities_tracker.clone(),
 			)
 			.map_err(|e| sc_service::Error::Other(e))?;
 
@@ -149,6 +154,8 @@ where
 			relay_chain_verifier,
 			_phantom: Default::default(),
 		};
+
+		let block_import = AuraBlockImport::new(block_import, authorities_tracker);
 
 		Ok(BasicQueue::new(verifier, Box::new(block_import), None, &spawner, registry))
 	}

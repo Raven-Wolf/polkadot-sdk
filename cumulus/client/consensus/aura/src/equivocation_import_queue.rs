@@ -29,7 +29,7 @@ use sc_consensus::{
 	import_queue::{BasicQueue, Verifier as VerifierT},
 	BlockImport, BlockImportParams, ForkChoiceStrategy,
 };
-use sc_consensus_aura::{standalone as aura_internal, AuthoritiesTracker, CompatibilityMode};
+use sc_consensus_aura::{standalone as aura_internal, AuthoritiesTracker};
 use sc_telemetry::{telemetry, TelemetryHandle, CONSENSUS_DEBUG, CONSENSUS_TRACE};
 use schnellru::{ByLength, LruMap};
 use sp_api::ProvideRuntimeApi;
@@ -79,7 +79,7 @@ pub struct Verifier<P: Pair, Client, Block: BlockT, CIDP> {
 	create_inherent_data_providers: CIDP,
 	defender: Mutex<NaiveEquivocationDefender<NumberFor<Block>>>,
 	telemetry: Option<TelemetryHandle>,
-	authorities_tracker: AuthoritiesTracker<P, Block, Client>,
+	authorities_tracker: Arc<AuthoritiesTracker<P, Block, Client>>,
 }
 
 impl<P, Client, Block, CIDP> Verifier<P, Client, Block, CIDP>
@@ -103,13 +103,14 @@ where
 		client: Arc<Client>,
 		inherent_data_provider: CIDP,
 		telemetry: Option<TelemetryHandle>,
+		authorities_tracker: Arc<AuthoritiesTracker<P, Block, Client>>,
 	) -> Result<Self, String> {
 		Ok(Self {
 			client: client.clone(),
 			create_inherent_data_providers: inherent_data_provider,
 			defender: Mutex::new(NaiveEquivocationDefender::default()),
 			telemetry,
-			authorities_tracker: AuthoritiesTracker::new(client, &CompatibilityMode::None)?,
+			authorities_tracker,
 		})
 	}
 }
@@ -274,6 +275,7 @@ pub fn fully_verifying_import_queue<P, Client, Block: BlockT, I, CIDP>(
 	spawner: &impl sp_core::traits::SpawnEssentialNamed,
 	registry: Option<&prometheus_endpoint::Registry>,
 	telemetry: Option<TelemetryHandle>,
+	authorities_tracker: Arc<AuthoritiesTracker<P, Block, Client>>,
 ) -> Result<BasicQueue<Block>, String>
 where
 	P: Pair + 'static,
@@ -298,7 +300,7 @@ where
 		create_inherent_data_providers,
 		defender: Mutex::new(NaiveEquivocationDefender::default()),
 		telemetry,
-		authorities_tracker: AuthoritiesTracker::new(client.clone(), &CompatibilityMode::None)?,
+		authorities_tracker,
 	};
 
 	Ok(BasicQueue::new(verifier, Box::new(block_import), None, spawner, registry))
@@ -316,6 +318,7 @@ mod test {
 	use futures::FutureExt;
 	use polkadot_primitives::{HeadData, PersistedValidationData};
 	use sc_client_api::HeaderBackend;
+	use sc_consensus_aura::CompatibilityMode;
 	use sp_consensus_aura::sr25519;
 	use sp_tracing::try_init_simple;
 	use std::{collections::HashSet, sync::Arc};
@@ -333,8 +336,9 @@ mod test {
 			},
 			defender: Mutex::new(NaiveEquivocationDefender::default()),
 			telemetry: None,
-			authorities_tracker: AuthoritiesTracker::new(client.clone(), &CompatibilityMode::None)
-				.unwrap(),
+			authorities_tracker: Arc::new(
+				AuthoritiesTracker::new(client.clone(), &CompatibilityMode::None).unwrap(),
+			),
 		};
 
 		let genesis = client.info().best_hash;

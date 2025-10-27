@@ -78,6 +78,7 @@ mod smoke {
 					p = p.with_chain_spec_path(path);
 				}
 				p.with_collator(|n| n.with_name("collator"))
+					.with_collator(|n| n.with_name("collator-peer"))
 			})
 		} else {
 			config
@@ -105,6 +106,11 @@ mod smoke {
 
 		// wait 6 blocks of the para
 		let collator = network.get_node("collator")?;
+		assert!(collator
+			.wait_metric("block_height{status=\"finalized\"}", |b| b > 5_f64)
+			.await
+			.is_ok());
+		let collator = network.get_node("collator-peer")?;
 		assert!(collator
 			.wait_metric("block_height{status=\"finalized\"}", |b| b > 5_f64)
 			.await
