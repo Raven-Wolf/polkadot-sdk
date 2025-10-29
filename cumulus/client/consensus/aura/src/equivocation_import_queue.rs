@@ -318,7 +318,7 @@ mod test {
 	use futures::FutureExt;
 	use polkadot_primitives::{HeadData, PersistedValidationData};
 	use sc_client_api::HeaderBackend;
-	use sc_consensus_aura::CompatibilityMode;
+	use sc_consensus_aura::{AuraBlockImport, CompatibilityMode};
 	use sp_consensus_aura::sr25519;
 	use sp_tracing::try_init_simple;
 	use std::{collections::HashSet, sync::Arc};
@@ -329,6 +329,8 @@ mod test {
 
 		let client = Arc::new(TestClientBuilder::default().build());
 
+		let (_, authorities_tracker) =
+			AuraBlockImport::new(client.clone(), client.clone(), &CompatibilityMode::None).unwrap();
 		let verifier = Verifier::<sr25519::AuthorityPair, Client, Block, _> {
 			client: client.clone(),
 			create_inherent_data_providers: |_, _| async move {
@@ -336,9 +338,7 @@ mod test {
 			},
 			defender: Mutex::new(NaiveEquivocationDefender::default()),
 			telemetry: None,
-			authorities_tracker: Arc::new(
-				AuthoritiesTracker::new(client.clone(), &CompatibilityMode::None).unwrap(),
-			),
+			authorities_tracker,
 		};
 
 		let genesis = client.info().best_hash;
