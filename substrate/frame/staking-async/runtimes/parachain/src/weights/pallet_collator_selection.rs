@@ -51,24 +51,6 @@ use core::marker::PhantomData;
 /// Weight functions for `pallet_collator_selection`.
 pub struct WeightInfo<T>(PhantomData<T>);
 impl<T: frame_system::Config> pallet_collator_selection::WeightInfo for WeightInfo<T> {
-	/// Storage: `Session::NextKeys` (r:20 w:0)
-	/// Proof: `Session::NextKeys` (`max_values`: None, `max_size`: None, mode: `Measured`)
-	/// Storage: `CollatorSelection::Invulnerables` (r:0 w:1)
-	/// Proof: `CollatorSelection::Invulnerables` (`max_values`: Some(1), `max_size`: Some(641), added: 1136, mode: `MaxEncodedLen`)
-	/// The range of component `b` is `[1, 20]`.
-	fn set_invulnerables(b: u32, ) -> Weight {
-		// Proof Size summary in bytes:
-		//  Measured:  `163 + b * (79 ±0)`
-		//  Estimated: `1154 + b * (2555 ±0)`
-		// Minimum execution time: 14_105_000 picoseconds.
-		Weight::from_parts(12_034_824, 0)
-			.saturating_add(Weight::from_parts(0, 1154))
-			// Standard Error: 7_023
-			.saturating_add(Weight::from_parts(3_121_830, 0).saturating_mul(b.into()))
-			.saturating_add(T::DbWeight::get().reads((1_u64).saturating_mul(b.into())))
-			.saturating_add(T::DbWeight::get().writes(1))
-			.saturating_add(Weight::from_parts(0, 2555).saturating_mul(b.into()))
-	}
 	/// Storage: `Session::NextKeys` (r:1 w:0)
 	/// Proof: `Session::NextKeys` (`max_values`: None, `max_size`: None, mode: `Measured`)
 	/// Storage: `CollatorSelection::Invulnerables` (r:1 w:1)
