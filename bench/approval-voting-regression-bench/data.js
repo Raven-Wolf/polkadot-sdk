@@ -1,107 +1,8 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1763734065488,
+  "lastUpdate": 1763745083077,
   "repoUrl": "https://github.com/paritytech/polkadot-sdk",
   "entries": {
     "approval-voting-regression-bench": [
-      {
-        "commit": {
-          "author": {
-            "email": "eresav@me.com",
-            "name": "Andrei Eres",
-            "username": "AndreiEres"
-          },
-          "committer": {
-            "email": "noreply@github.com",
-            "name": "GitHub",
-            "username": "web-flow"
-          },
-          "distinct": false,
-          "id": "10cde1f6119068cc2b1d71b536cf5e4c442b77b2",
-          "message": "Add trie cache warmup (#7556)\n\n# Description\nFixes https://github.com/paritytech/polkadot-sdk/issues/7533.\n\nPart of launching smart contracts on AssetHub. The current task involves\nwarming up the state and performing sanity checks to ensure that memory\nusage remains within reasonable limits; otherwise, it should abort\ngracefully.\n\nHere is a breakdown of the task by parts: \n- **Configuration.** We use a CLI flag to trigger the warm up. To\nincrease the cache size, we use an existing flag.\n- **Warm-up.** We populate the trie cache with values from the database\nusing a best hash as a storage root. For normal use we spawn a\nbackground task for it, for testing purposes we warm up in a blocking\nmanner.\n- **Sanity checks.** If we find that the configured cache size is too\nlarge, we warn.\n\nVariants of the added flag:\n| Flag | Meaning |\n\n|---------------------------------|---------------------------------------------|\n| [no flag] | no warm-up |\n| warm-up-trie-cache | non-blocking warmup |\n| warm-up-trie-cache non-blocking | non-blocking warmup (same as just\nthe flag) |\n| —warm-up-trie-cache blocking | blocking warmup |\n\n## Integration\nTested on a snapshot from polkadot-asset-hub: 5426064 keys, ~900MIB\nstate. Populating Trie cache takes 1.5–2 minutes on Macbook Pro M2.\n\n## Aditional Notes\nInitially, we thought about putting the entire state into memory using a\nCLI flag or a runtime parameter, but decided against it. That’s up to\ncollators to decide on which setup run their machines, they can use the\ncurrent cache size setting to increase the throughput.\n\n## Todos\nTesting moved to https://github.com/paritytech/polkadot-sdk/pull/8644\n\n---------\n\nCo-authored-by: cmd[bot] <41898282+github-actions[bot]@users.noreply.github.com>\nCo-authored-by: Alexandru Gheorghe <49718502+alexggh@users.noreply.github.com>\nCo-authored-by: Alexander Theißen <alex.theissen@me.com>",
-          "timestamp": "2025-05-28T07:25:44Z",
-          "tree_id": "d0651e283a76fa6c43f7ced7520471aba8e1c904",
-          "url": "https://github.com/paritytech/polkadot-sdk/commit/10cde1f6119068cc2b1d71b536cf5e4c442b77b2"
-        },
-        "date": 1748420854479,
-        "tool": "customSmallerIsBetter",
-        "benches": [
-          {
-            "name": "Received from peers",
-            "value": 52945.3,
-            "unit": "KiB"
-          },
-          {
-            "name": "Sent to peers",
-            "value": 63631.08,
-            "unit": "KiB"
-          },
-          {
-            "name": "approval-voting-parallel/approval-voting-parallel-2",
-            "value": 2.420632589340001,
-            "unit": "seconds"
-          },
-          {
-            "name": "approval-voting-parallel/approval-voting-parallel-subsystem",
-            "value": 0.4709466015799971,
-            "unit": "seconds"
-          },
-          {
-            "name": "approval-voting-parallel/approval-voting-gather-signatures",
-            "value": 0.005492240350000004,
-            "unit": "seconds"
-          },
-          {
-            "name": "approval-distribution/test-environment",
-            "value": 0.00002049909,
-            "unit": "seconds"
-          },
-          {
-            "name": "approval-voting/test-environment",
-            "value": 0.000019100130000000002,
-            "unit": "seconds"
-          },
-          {
-            "name": "approval-voting-parallel/approval-voting-parallel-0",
-            "value": 2.3692783730800007,
-            "unit": "seconds"
-          },
-          {
-            "name": "approval-voting-parallel/approval-voting-parallel-1",
-            "value": 2.3546360617199995,
-            "unit": "seconds"
-          },
-          {
-            "name": "approval-voting-parallel/approval-voting-parallel-3",
-            "value": 2.3647850703000026,
-            "unit": "seconds"
-          },
-          {
-            "name": "approval-voting",
-            "value": 0.000019100130000000002,
-            "unit": "seconds"
-          },
-          {
-            "name": "approval-voting-parallel/approval-voting-parallel-db",
-            "value": 1.917806130529991,
-            "unit": "seconds"
-          },
-          {
-            "name": "approval-voting-parallel",
-            "value": 11.903577066899993,
-            "unit": "seconds"
-          },
-          {
-            "name": "test-environment",
-            "value": 3.393212866902453,
-            "unit": "seconds"
-          },
-          {
-            "name": "approval-distribution",
-            "value": 0.00002049909,
-            "unit": "seconds"
-          }
-        ]
-      },
       {
         "commit": {
           "author": {
@@ -49499,6 +49400,105 @@ window.BENCHMARK_DATA = {
           {
             "name": "approval-voting-parallel/approval-voting-parallel-2",
             "value": 2.5776359646299998,
+            "unit": "seconds"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "15174476+TorstenStueber@users.noreply.github.com",
+            "name": "Torsten Stüber",
+            "username": "TorstenStueber"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f66f240a47f7ece64936487734ecfe44b6ef5999",
+          "message": "Enable force debug in revive dev node (#10383)\n\nThis change ensures that all types that implement `RuntimeDebug` are\nfully displayed in log output of the revive dev node, instead of just\nshowing `<wasm:stripped>`.\n\nUnfortunately, the trait `RuntimeDebugNoBound`, that we also use\nfrequently in pallet-revive, is not affected and will still output\n`<wasm:stripped>` (it does not check for the `force-debug` feature flag,\ninstead it only fully outputs values when either one of the features\n`std` or `try_runtime` is enabled – this is something we implement as a\ngeneral change).\n\n---------\n\nCo-authored-by: cmd[bot] <41898282+github-actions[bot]@users.noreply.github.com>\nCo-authored-by: pgherveou <pgherveou@gmail.com>",
+          "timestamp": "2025-11-21T15:51:45Z",
+          "tree_id": "5eddbb2be51e810d4f82f211c1b93b4d6eddf0b2",
+          "url": "https://github.com/paritytech/polkadot-sdk/commit/f66f240a47f7ece64936487734ecfe44b6ef5999"
+        },
+        "date": 1763745058795,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Sent to peers",
+            "value": 63625.27,
+            "unit": "KiB"
+          },
+          {
+            "name": "Received from peers",
+            "value": 52937.5,
+            "unit": "KiB"
+          },
+          {
+            "name": "approval-voting-parallel/approval-voting-parallel-subsystem",
+            "value": 0.4296153728500002,
+            "unit": "seconds"
+          },
+          {
+            "name": "approval-distribution/test-environment",
+            "value": 0.000019304620000000003,
+            "unit": "seconds"
+          },
+          {
+            "name": "approval-voting-parallel",
+            "value": 12.540639350379992,
+            "unit": "seconds"
+          },
+          {
+            "name": "approval-voting-parallel/approval-voting-parallel-3",
+            "value": 2.523930060650001,
+            "unit": "seconds"
+          },
+          {
+            "name": "approval-voting",
+            "value": 0.000019213810000000003,
+            "unit": "seconds"
+          },
+          {
+            "name": "approval-voting/test-environment",
+            "value": 0.000019213810000000003,
+            "unit": "seconds"
+          },
+          {
+            "name": "approval-voting-parallel/approval-voting-parallel-1",
+            "value": 2.498143178340001,
+            "unit": "seconds"
+          },
+          {
+            "name": "approval-voting-parallel/approval-voting-parallel-2",
+            "value": 2.5799444453400002,
+            "unit": "seconds"
+          },
+          {
+            "name": "test-environment",
+            "value": 2.681705763010727,
+            "unit": "seconds"
+          },
+          {
+            "name": "approval-distribution",
+            "value": 0.000019304620000000003,
+            "unit": "seconds"
+          },
+          {
+            "name": "approval-voting-parallel/approval-voting-gather-signatures",
+            "value": 0.005826852410000002,
+            "unit": "seconds"
+          },
+          {
+            "name": "approval-voting-parallel/approval-voting-parallel-0",
+            "value": 2.5407452769799983,
+            "unit": "seconds"
+          },
+          {
+            "name": "approval-voting-parallel/approval-voting-parallel-db",
+            "value": 1.962434163809991,
             "unit": "seconds"
           }
         ]
