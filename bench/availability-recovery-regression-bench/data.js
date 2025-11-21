@@ -1,52 +1,8 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1763734009970,
+  "lastUpdate": 1763745017224,
   "repoUrl": "https://github.com/paritytech/polkadot-sdk",
   "entries": {
     "availability-recovery-regression-bench": [
-      {
-        "commit": {
-          "author": {
-            "email": "35698397+drskalman@users.noreply.github.com",
-            "name": "drskalman",
-            "username": "drskalman"
-          },
-          "committer": {
-            "email": "noreply@github.com",
-            "name": "GitHub",
-            "username": "web-flow"
-          },
-          "distinct": true,
-          "id": "b4b7439e6f7bdd61a0a0d9fc3949b1f50a8dcfb6",
-          "message": "Implement Proof Of Possession capability for all public key crypto types (#6010)\n\n- Implement `ProofOfPossession` traits with default implementation.\n- Implement their derive macro in a new proc-macro crate in\n`pubkeycrypto` create which eventually should contains all pubkey crypto\nscheme as recommended by #1975\n- Derive ProofOfPossession for all pubkey crypto type beside BLS.\n\n- [x] Implement Nugget BLS proof of possession which should certifies\nthat the unique secret key known to the prover is used to generate both\npublic keys in G1 and G2.\n- [x] Implement sign Host function for BLS12-381 necessary to be able to\ngenerate proof of possion through runtime.\n- [x] Implement generation and verification of proof of possession\nfunctions in all RuntimeApp and RuntimeAppPublic s.\n\n---------\n\nCo-authored-by: Andrew Burger <andrewburger1991@gmail.com>\nCo-authored-by: Davide Galassi <davxy@datawok.net>\nCo-authored-by: Bastian Köcher <git@kchr.de>",
-          "timestamp": "2025-05-28T10:23:48Z",
-          "tree_id": "a0ecb6b5ff85adc5aba7ca79a715bfbc154a77c6",
-          "url": "https://github.com/paritytech/polkadot-sdk/commit/b4b7439e6f7bdd61a0a0d9fc3949b1f50a8dcfb6"
-        },
-        "date": 1748433010449,
-        "tool": "customSmallerIsBetter",
-        "benches": [
-          {
-            "name": "Sent to peers",
-            "value": 1.6666666666666665,
-            "unit": "KiB"
-          },
-          {
-            "name": "Received from peers",
-            "value": 307203,
-            "unit": "KiB"
-          },
-          {
-            "name": "test-environment",
-            "value": 0.19702661236666666,
-            "unit": "seconds"
-          },
-          {
-            "name": "availability-recovery",
-            "value": 11.288415725300002,
-            "unit": "seconds"
-          }
-        ]
-      },
       {
         "commit": {
           "author": {
@@ -21999,6 +21955,50 @@ window.BENCHMARK_DATA = {
           {
             "name": "test-environment",
             "value": 0.20139735886666665,
+            "unit": "seconds"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "15174476+TorstenStueber@users.noreply.github.com",
+            "name": "Torsten Stüber",
+            "username": "TorstenStueber"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f66f240a47f7ece64936487734ecfe44b6ef5999",
+          "message": "Enable force debug in revive dev node (#10383)\n\nThis change ensures that all types that implement `RuntimeDebug` are\nfully displayed in log output of the revive dev node, instead of just\nshowing `<wasm:stripped>`.\n\nUnfortunately, the trait `RuntimeDebugNoBound`, that we also use\nfrequently in pallet-revive, is not affected and will still output\n`<wasm:stripped>` (it does not check for the `force-debug` feature flag,\ninstead it only fully outputs values when either one of the features\n`std` or `try_runtime` is enabled – this is something we implement as a\ngeneral change).\n\n---------\n\nCo-authored-by: cmd[bot] <41898282+github-actions[bot]@users.noreply.github.com>\nCo-authored-by: pgherveou <pgherveou@gmail.com>",
+          "timestamp": "2025-11-21T15:51:45Z",
+          "tree_id": "5eddbb2be51e810d4f82f211c1b93b4d6eddf0b2",
+          "url": "https://github.com/paritytech/polkadot-sdk/commit/f66f240a47f7ece64936487734ecfe44b6ef5999"
+        },
+        "date": 1763744993509,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Received from peers",
+            "value": 307203,
+            "unit": "KiB"
+          },
+          {
+            "name": "Sent to peers",
+            "value": 1.6666666666666665,
+            "unit": "KiB"
+          },
+          {
+            "name": "availability-recovery",
+            "value": 11.366167015933335,
+            "unit": "seconds"
+          },
+          {
+            "name": "test-environment",
+            "value": 0.20214172529999996,
             "unit": "seconds"
           }
         ]
