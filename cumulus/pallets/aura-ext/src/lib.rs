@@ -40,6 +40,7 @@ use sp_runtime::traits::{Block as BlockT, Header as HeaderT, LazyBlock};
 
 pub mod consensus_hook;
 pub mod migration;
+#[cfg(test)]
 mod test;
 
 pub use consensus_hook::FixedVelocityConsensusHook;
