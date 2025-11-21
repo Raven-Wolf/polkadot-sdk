@@ -1,62 +1,8 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1763734037376,
+  "lastUpdate": 1763745049893,
   "repoUrl": "https://github.com/paritytech/polkadot-sdk",
   "entries": {
     "availability-distribution-regression-bench": [
-      {
-        "commit": {
-          "author": {
-            "email": "49718502+alexggh@users.noreply.github.com",
-            "name": "Alexandru Gheorghe",
-            "username": "alexggh"
-          },
-          "committer": {
-            "email": "noreply@github.com",
-            "name": "GitHub",
-            "username": "web-flow"
-          },
-          "distinct": true,
-          "id": "4b5a9ad94c192731e8a2c927fe003de85e2f3225",
-          "message": "asset-hub-westend: use inmemorydb weights (#8359)\n\nModify asset-hub-westend to use the read/write costs in validate block\non validator reference hardware, since these are\nweights that guarantee the blocks will pass validation and make it on\nthe relay chain.\n\nThis were obtained with the benchmark created here:\nhttps://github.com/paritytech/polkadot-sdk/pull/8069 and it contains all\nthe optimisation brought by\nhttps://github.com/paritytech/polkadot-sdk/pull/8607.\n\nFixes: https://github.com/paritytech/polkadot-sdk/issues/7537\n\n---------\n\nSigned-off-by: Alexandru Gheorghe <alexandru.gheorghe@parity.io>",
-          "timestamp": "2025-05-28T07:52:32Z",
-          "tree_id": "e509d535444cfaf8f3f8804954fde729b8ea2078",
-          "url": "https://github.com/paritytech/polkadot-sdk/commit/4b5a9ad94c192731e8a2c927fe003de85e2f3225"
-        },
-        "date": 1748422893797,
-        "tool": "customSmallerIsBetter",
-        "benches": [
-          {
-            "name": "Received from peers",
-            "value": 433.3333333333332,
-            "unit": "KiB"
-          },
-          {
-            "name": "Sent to peers",
-            "value": 18481.666666666653,
-            "unit": "KiB"
-          },
-          {
-            "name": "availability-distribution",
-            "value": 0.01292960132,
-            "unit": "seconds"
-          },
-          {
-            "name": "availability-store",
-            "value": 0.15764072958666667,
-            "unit": "seconds"
-          },
-          {
-            "name": "test-environment",
-            "value": 0.008844630200000076,
-            "unit": "seconds"
-          },
-          {
-            "name": "bitfield-distribution",
-            "value": 0.022623020073333337,
-            "unit": "seconds"
-          }
-        ]
-      },
       {
         "commit": {
           "author": {
@@ -26999,6 +26945,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "availability-store",
             "value": 0.1606333770266667,
+            "unit": "seconds"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "15174476+TorstenStueber@users.noreply.github.com",
+            "name": "Torsten Stüber",
+            "username": "TorstenStueber"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f66f240a47f7ece64936487734ecfe44b6ef5999",
+          "message": "Enable force debug in revive dev node (#10383)\n\nThis change ensures that all types that implement `RuntimeDebug` are\nfully displayed in log output of the revive dev node, instead of just\nshowing `<wasm:stripped>`.\n\nUnfortunately, the trait `RuntimeDebugNoBound`, that we also use\nfrequently in pallet-revive, is not affected and will still output\n`<wasm:stripped>` (it does not check for the `force-debug` feature flag,\ninstead it only fully outputs values when either one of the features\n`std` or `try_runtime` is enabled – this is something we implement as a\ngeneral change).\n\n---------\n\nCo-authored-by: cmd[bot] <41898282+github-actions[bot]@users.noreply.github.com>\nCo-authored-by: pgherveou <pgherveou@gmail.com>",
+          "timestamp": "2025-11-21T15:51:45Z",
+          "tree_id": "5eddbb2be51e810d4f82f211c1b93b4d6eddf0b2",
+          "url": "https://github.com/paritytech/polkadot-sdk/commit/f66f240a47f7ece64936487734ecfe44b6ef5999"
+        },
+        "date": 1763745026449,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Sent to peers",
+            "value": 18481.666666666653,
+            "unit": "KiB"
+          },
+          {
+            "name": "Received from peers",
+            "value": 433.3333333333332,
+            "unit": "KiB"
+          },
+          {
+            "name": "test-environment",
+            "value": 0.007342777519999987,
+            "unit": "seconds"
+          },
+          {
+            "name": "availability-store",
+            "value": 0.15979270038000004,
+            "unit": "seconds"
+          },
+          {
+            "name": "availability-distribution",
+            "value": 0.013251021319999999,
+            "unit": "seconds"
+          },
+          {
+            "name": "bitfield-distribution",
+            "value": 0.022954600280000004,
             "unit": "seconds"
           }
         ]
